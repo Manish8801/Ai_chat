@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "dev": "pnpm db:up && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
