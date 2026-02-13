@@ -13,7 +13,5 @@ export const env = {
   BETTER_AUTH_SECRET: getEnv("BETTER_AUTH_SECRET"),
   GOOGLE_CLIENT_ID: getEnv("GOOGLE_CLIENT_ID"),
   GOOGLE_CLIENT_SECRET: getEnv("GOOGLE_CLIENT_SECRET"),
-  DATABASE_URL: getEnv(
-    `postgresql://${getEnv("POSTGRES_USER")}:${getEnv("POSTGRES_PASSWORD")}@localhost:5433/${getEnv("POSTGRES_DB")}`,
-  ),
+  DATABASE_URL: `postgresql://${getEnv("POSTGRES_USER")}:${getEnv("POSTGRES_PASSWORD")}@localhost:5433/${getEnv("POSTGRES_DB")}`,
 };
