@@ -1,1 +1,1 @@
-dexl
+declare module "*.css";
