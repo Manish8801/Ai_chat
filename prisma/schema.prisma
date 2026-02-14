@@ -13,6 +13,17 @@ datasource db {
   provider = "postgresql"
 }
 
+enum MessageRole {
+  USER
+  ASSISTANT
+}
+
+enum MessageType {
+  NORMAL
+  ERROR
+  TOOL_CALL
+}
+
 model Session {
   id        String   @id
   expiresAt DateTime
@@ -71,7 +82,38 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  chats         Chat[]
 
   @@unique([email])
   @@map("user")
+}
+
+model Chat {
+  id        String    @id @default(cuid(2))
+  title     String
+  model     String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([userId, updatedAt])
+  @@map("chat")
+}
+
+model Message {
+  id          String      @id @default(cuid(2))
+  chatId      String
+  messageRole MessageRole @default(USER)
+  messageType MessageType @default(NORMAL)
+  content     String
+  chat        Chat        @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  model       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([chatId, createdAt])
+  @@map("message")
 }
