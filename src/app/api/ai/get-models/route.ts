@@ -1,4 +1,3 @@
-import { env } from "@/lib/env";
 import { NextRequest, NextResponse } from "next/server";
 
 export interface Root {
@@ -50,7 +49,7 @@ export async function GET(req: NextRequest) {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
       },
     });
 
