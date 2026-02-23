@@ -14,8 +14,9 @@ datasource db {
 }
 
 enum MessageRole {
-  USER
-  ASSISTANT
+  user
+  assistant
+  system
 }
 
 enum MessageType {
@@ -103,13 +104,14 @@ model Chat {
 }
 
 model Message {
-  id          String      @id @default(cuid(2))
-  chatId      String
-  messageRole MessageRole @default(USER)
-  messageType MessageType @default(NORMAL)
-  content     String
-  chat        Chat        @relation(fields: [chatId], references: [id], onDelete: Cascade)
-  model       String?
+  id        String      @id @default(cuid(2))
+  chatId    String
+  reasoning String?     @default("")
+  role      MessageRole @default(user)
+  type      MessageType @default(NORMAL)
+  content   String
+  chat      Chat        @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  model     String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

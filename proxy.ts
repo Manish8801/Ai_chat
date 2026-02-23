@@ -8,10 +8,10 @@ export async function proxy(request: NextRequest) {
   });
 
   if (!session) {
-    return NextResponse.redirect(new URL("/sign-in", request.url));
+    return NextResponse.redirect(new URL("/log-in", request.url));
   }
 
-  return NextResponse.next();
+  return NextResponse.redirect(new URL("/log-in", request.url));
 }
 
 export const config = {

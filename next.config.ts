@@ -9,9 +9,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  experimental: {
-    optimizePackageImports: ["react-devicons", "lucide-react"],
-  },
   reactCompiler: true,
 };
 

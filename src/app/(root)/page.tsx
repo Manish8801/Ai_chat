@@ -1,15 +1,15 @@
-import {
-  getCurrentUser,
-  requireSession,
-} from "@/features/auth/actions/auth.action";
-import ChatMessageView from "@/features/chat/components/chat-message-view";
+import { Button } from "@/components/ui/button";
+import { getSession } from "@/features/auth/actions/auth.action";
+import Link from "next/link";
 
 export default async function HomePage() {
-  await requireSession();
-  const user = await getCurrentUser();
+  const session = await getSession();
+
   return (
-    <div>
-      <ChatMessageView user={user} />
+    <div className="h-screen w-full flex items-center justify-center ">
+      <Button asChild>
+        <Link href={session ? "/chats" : "/sign-up"}>Get Started</Link>
+      </Button>
     </div>
   );
 }

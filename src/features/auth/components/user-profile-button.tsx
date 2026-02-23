@@ -1,7 +1,4 @@
-"use client";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge, badgeVariants } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,63 +9,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { User } from "@/generated/prisma/client";
-import { authClient } from "@/lib/auth-client";
-import { VariantProps } from "class-variance-authority";
+import { LogIn, LogOut } from "lucide-react";
+import { authClient } from "../../../lib/auth-client";
+import { getCurrentUser } from "../actions/auth.action";
 
-import { CreditCard, LogOut, Settings, User as UserIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-
-type Props = {
-  user: User | null | undefined;
-  onSettings?: () => void;
-  onProfile?: () => void;
-  onBilling?: () => void;
-  showBadge?: boolean;
-  badgeText?: string;
-  badgeVariant?: VariantProps<typeof badgeVariants>["variant"];
-  size?: "sm" | "md" | "lg";
-  showEmail?: boolean;
-  showMemberSince?: boolean;
-};
-export default function UserButton(props: Props) {
-  const {
-    user,
-    onSettings,
-    onProfile,
-    onBilling,
-    showBadge = false,
-    badgeText = "Pro",
-    badgeVariant = "default",
-    size = "md",
-    showEmail = true,
-    showMemberSince = true,
-  } = props;
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-
-  const onSignOut = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push("/sign-in");
-        },
-      },
-    });
-  };
-
-  const handleLogout = async () => {
-    setIsLoading(true);
-    try {
-      await onSignOut();
-    } catch (error) {
-      console.error("Logout error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Get user initials for avatar fallback
+export default async function UserButton() {
+  const user = await getCurrentUser();
   const getUserInitials = (name: User["name"], email: User["email"]) => {
     if (name) {
       return name
@@ -83,65 +29,42 @@ export default function UserButton(props: Props) {
     }
     return "U";
   };
-
-  // Format member since date
-  const formatMemberSince = (date: Date) => {
+  const formattedMemberSince = (date: Date) => {
     return new Intl.DateTimeFormat("en-US", {
       month: "long",
       year: "numeric",
     }).format(new Date(date));
   };
-
-  // Avatar sizes
-  const avatarSizes = {
-    sm: "h-8 w-8",
-    md: "h-10 w-10",
-    lg: "h-12 w-12",
-  };
-
-  // Don't render if no user
   if (!user) {
-    return null;
+    return (
+      <Button variant={"ghost"} size={"icon"}>
+        <LogIn />
+      </Button>
+    );
   }
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className={`relative ${avatarSizes[size]} rounded-full p-0 hover:bg-accent`}
-          disabled={isLoading}
-        >
-          <Avatar className={avatarSizes[size]}>
-            <AvatarImage
-              src={user.image || ""}
-              alt={user.name || "User avatar"}
-            />
-            <AvatarFallback className="bg-primary text-primary-foreground font-medium">
-              {getUserInitials(user.name, user.email)}
-            </AvatarFallback>
-          </Avatar>
-          {showBadge && (
-            <Badge
-              variant={badgeVariant}
-              className="absolute -bottom-1 -right-1 h-5 px-1 text-xs"
-            >
-              {badgeText}
-            </Badge>
-          )}
-        </Button>
+      <DropdownMenuTrigger>
+        <Avatar>
+          <AvatarImage src={user.image || ""} alt={user.name} />
+          <AvatarFallback>
+            {getUserInitials(user.name, user.email)}
+          </AvatarFallback>
+        </Avatar>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-64" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-2">
             <div className="flex items-center space-x-3">
-              <Avatar className="h-12 w-12">
+              <Avatar>
                 <AvatarImage
                   src={user.image || ""}
                   alt={user.name || "User avatar"}
+                  className="size-5"
                 />
-                <AvatarFallback className="bg-primary text-primary-foreground font-medium text-lg">
+                <AvatarFallback className="size-5 bg-primary text-primary-foreground font-medium text-lg">
                   {getUserInitials(user.name, user.email)}
                 </AvatarFallback>
               </Avatar>
@@ -149,58 +72,33 @@ export default function UserButton(props: Props) {
                 <p className="text-sm font-medium leading-none">
                   {user.name || "User"}
                 </p>
-                {showEmail && user.email && (
+                {user.email && (
                   <p className="text-xs leading-none text-muted-foreground">
                     {user.email}
                   </p>
                 )}
-                {showBadge && (
-                  <Badge variant={badgeVariant} className="w-fit">
-                    {badgeText}
-                  </Badge>
-                )}
               </div>
             </div>
-            {showMemberSince && (
-              <p className="text-xs text-muted-foreground">
-                Member since {formatMemberSince(user.createdAt)}
-              </p>
-            )}
+            <p className="text-xs text-muted-foreground">
+              Member since {formattedMemberSince(user.createdAt)}
+            </p>
           </div>
         </DropdownMenuLabel>
 
         <DropdownMenuSeparator />
 
-        {onProfile && (
-          <DropdownMenuItem onClick={onProfile} className="cursor-pointer">
-            <UserIcon className="mr-2 h-4 w-4" />
-            Profile
-          </DropdownMenuItem>
-        )}
-
-        {onBilling && (
-          <DropdownMenuItem onClick={onBilling} className="cursor-pointer">
-            <CreditCard className="mr-2 h-4 w-4" />
-            Billing
-          </DropdownMenuItem>
-        )}
-
-        {onSettings && (
-          <DropdownMenuItem onClick={onSettings} className="cursor-pointer">
-            <Settings className="mr-2 h-4 w-4" />
-            Settings
-          </DropdownMenuItem>
-        )}
-
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem
-          onClick={handleLogout}
-          disabled={isLoading}
-          className="cursor-pointer text-destructive focus:text-destructive"
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          {isLoading ? "Logging out..." : "Log out"}
+        <DropdownMenuItem asChild>
+          <button
+            className="w-full cursor-pointer text-destructive focus:text-destructive"
+            onClick={async () => {
+              await authClient.signOut();
+            }}
+          >
+            <LogOut className="mr-2 size-4" />
+            Log out
+          </button>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

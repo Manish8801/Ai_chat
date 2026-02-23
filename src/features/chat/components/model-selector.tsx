@@ -1,4 +1,5 @@
 "use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,32 +19,45 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { Check, ChevronDown, Info, Search, Sparkles } from "lucide-react";
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useDeferredValue, useMemo, useState } from "react";
+import { useChatStore, UseChatStore } from "../store/useChatStore";
 import { Model, Models } from "../types/model.types";
 
 type Props = {
-  models: Models;
-  selectedModelId: Model["id"];
-  onModelSelect: (modelId: Model["id"]) => void;
-  className: string;
+  models: Models | undefined;
+  selectedModel: UseChatStore["selectedModel"];
 };
-export function ModelSelector(props: Props) {
-  const { models, selectedModelId, onModelSelect, className } = props;
+export default function ModelSelector(props: Props) {
+  const { models, selectedModel } = props;
   const [open, setOpen] = useState(false);
-  const [detailsOpen, setDetailsOpen] = useState(false);
-  const [selectedForDetails, setSelectedForDetails] = useState<Model | null>(
-    null,
-  );
   const [searchQuery, setSearchQuery] = useState("");
+  const { setSelectedModel } = useChatStore();
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const deferredQuery = useDeferredValue(searchQuery);
+  const filteredModels = useMemo(() => {
+    const query = deferredQuery.toLowerCase();
+    return (
+      models?.filter((model) => {
+        return (
+          model.name.toLowerCase().includes(query) ||
+          model.description.toLowerCase().includes(query) ||
+          model.id.toLowerCase().includes(query) ||
+          model.architecture.modality.toLowerCase().includes(query)
+        );
+      }) || []
+    );
+  }, [deferredQuery, models]);
 
-  const selectedModel = models.find((m) => m.id === selectedModelId);
+  if (!models) return "Models not found";
+
+  const random =
+    models.find((model) => model.id === selectedModel) || models[0];
 
   const formatContextLength = (length: number) => {
     if (length >= 1000000) return `${(length / 1000000).toFixed(1)}M`;
     if (length >= 1000) return `${(length / 1000).toFixed(0)}K`;
-    return length.toString();
+    return length;
   };
-
   const isFreeModel = (model: Model) => {
     return (
       model.pricing.prompt === "0" &&
@@ -52,21 +66,10 @@ export function ModelSelector(props: Props) {
     );
   };
 
-  const openModelDetails = (model: Model, e: MouseEvent<HTMLButtonElement>) => {
+  const openModelDetails = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    setSelectedForDetails(model);
     setDetailsOpen(true);
   };
-
-  const filteredModels = models.filter((model) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      model.name.toLowerCase().includes(query) ||
-      model.description.toLowerCase().includes(query) ||
-      model.id.toLowerCase().includes(query) ||
-      model.architecture.modality.toLowerCase().includes(query)
-    );
-  });
   return (
     <>
       <Popover open={open} onOpenChange={setOpen}>
@@ -77,13 +80,12 @@ export function ModelSelector(props: Props) {
             aria-expanded={open}
             className={cn(
               "h-8 justify-between gap-2 px-2 text-xs hover:bg-accent",
-              className,
             )}
           >
             <div className="flex items-center gap-1.5 min-w-0">
               <Sparkles className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
               <span className="truncate font-medium">
-                {selectedModel?.name || "Select model"}
+                {random.name || "Select model"}
               </span>
             </div>
             <ChevronDown className="h-3.5 w-3.5 shrink-0 opacity-50" />
@@ -119,10 +121,10 @@ export function ModelSelector(props: Props) {
                     key={model.id}
                     className={cn(
                       "relative flex cursor-pointer select-none items-start gap-2 rounded-md px-2 py-2 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground",
-                      selectedModelId === model.id && "bg-accent",
+                      random.id === model.id && "bg-accent",
                     )}
                     onClick={() => {
-                      onModelSelect(model.id);
+                      setSelectedModel(model.id);
                       setOpen(false);
                       setSearchQuery("");
                     }}
@@ -131,9 +133,7 @@ export function ModelSelector(props: Props) {
                       <Check
                         className={cn(
                           "h-4 w-4",
-                          selectedModelId === model.id
-                            ? "opacity-100"
-                            : "opacity-0",
+                          random.id === model.id ? "opacity-100" : "opacity-0",
                         )}
                       />
                     </div>
@@ -168,7 +168,7 @@ export function ModelSelector(props: Props) {
                       variant="ghost"
                       size="sm"
                       className="h-6 w-6 p-0 shrink-0"
-                      onClick={(e) => openModelDetails(model, e)}
+                      onClick={(e) => openModelDetails(e)}
                     >
                       <Info className="h-3.5 w-3.5" />
                       <span className="sr-only">View details</span>
@@ -186,20 +186,20 @@ export function ModelSelector(props: Props) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5" />
-              {selectedForDetails?.name}
+              {random?.name}
             </DialogTitle>
             <DialogDescription>
               Detailed information about this AI model
             </DialogDescription>
           </DialogHeader>
           <ScrollArea className=" pr-4 h-100">
-            {selectedForDetails && (
+            {random && (
               <div className="space-y-6">
                 {/* Description */}
                 <div>
                   <h3 className="text-sm font-semibold mb-2">Description</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    {selectedForDetails.description}
+                    {random.description}
                   </p>
                 </div>
 
@@ -216,8 +216,7 @@ export function ModelSelector(props: Props) {
                         Context Length
                       </p>
                       <p className="text-sm font-medium">
-                        {formatContextLength(selectedForDetails.context_length)}{" "}
-                        tokens
+                        {formatContextLength(random.context_length)} tokens
                       </p>
                     </div>
                     <div className="space-y-1">
@@ -226,7 +225,7 @@ export function ModelSelector(props: Props) {
                       </p>
                       <p className="text-sm font-medium">
                         {formatContextLength(
-                          selectedForDetails.top_provider.max_completion_tokens,
+                          random.top_provider.max_completion_tokens,
                         )}{" "}
                         tokens
                       </p>
@@ -234,16 +233,13 @@ export function ModelSelector(props: Props) {
                     <div className="space-y-1">
                       <p className="text-xs text-muted-foreground">Modality</p>
                       <p className="text-sm font-medium capitalize">
-                        {selectedForDetails.architecture.modality.replace(
-                          "->",
-                          " → ",
-                        )}
+                        {random.architecture.modality.replace("->", " → ")}
                       </p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-xs text-muted-foreground">Tokenizer</p>
                       <p className="text-sm font-medium">
-                        {selectedForDetails.architecture.tokenizer}
+                        {random.architecture.tokenizer}
                       </p>
                     </div>
                   </div>
@@ -262,7 +258,7 @@ export function ModelSelector(props: Props) {
                         Input Modalities
                       </p>
                       <div className="flex flex-wrap gap-1">
-                        {selectedForDetails.architecture.input_modalities.map(
+                        {random.architecture.input_modalities.map(
                           (modality) => (
                             <Badge
                               key={modality}
@@ -280,7 +276,7 @@ export function ModelSelector(props: Props) {
                         Output Modalities
                       </p>
                       <div className="flex flex-wrap gap-1">
-                        {selectedForDetails.architecture.output_modalities.map(
+                        {random.architecture.output_modalities.map(
                           (modality) => (
                             <Badge
                               key={modality}
@@ -301,7 +297,7 @@ export function ModelSelector(props: Props) {
                 {/* Pricing */}
                 <div>
                   <h3 className="text-sm font-semibold mb-3">Pricing</h3>
-                  {isFreeModel(selectedForDetails) ? (
+                  {isFreeModel(random) ? (
                     <div className="flex items-center gap-2 p-3 rounded-lg bg-green-500/10 border border-green-500/20">
                       <Badge variant="secondary" className="bg-green-500/20">
                         FREE
@@ -312,19 +308,17 @@ export function ModelSelector(props: Props) {
                     </div>
                   ) : (
                     <div className="grid grid-cols-2 gap-3">
-                      {Object.entries(selectedForDetails.pricing).map(
-                        ([key, value]) => {
-                          if (value === "0") return null;
-                          return (
-                            <div key={key} className="space-y-1">
-                              <p className="text-xs text-muted-foreground capitalize">
-                                {key.replace("_", " ")}
-                              </p>
-                              <p className="text-sm font-medium">${value}</p>
-                            </div>
-                          );
-                        },
-                      )}
+                      {Object.entries(random.pricing).map(([key, value]) => {
+                        if (value === "0") return null;
+                        return (
+                          <div key={key} className="space-y-1">
+                            <p className="text-xs text-muted-foreground capitalize">
+                              {key.replace("_", " ")}
+                            </p>
+                            <p className="text-sm font-medium">${value}</p>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -343,12 +337,12 @@ export function ModelSelector(props: Props) {
                       </span>
                       <Badge
                         variant={
-                          selectedForDetails.top_provider.is_moderated
+                          random.top_provider.is_moderated
                             ? "default"
                             : "secondary"
                         }
                       >
-                        {selectedForDetails.top_provider.is_moderated
+                        {random.top_provider.is_moderated
                           ? "Enabled"
                           : "Disabled"}
                       </Badge>
@@ -360,7 +354,7 @@ export function ModelSelector(props: Props) {
                 <div>
                   <h3 className="text-sm font-semibold mb-2">Model ID</h3>
                   <code className="text-xs bg-muted px-2 py-1 rounded block break-all">
-                    {selectedForDetails.id}
+                    {random.id}
                   </code>
                 </div>
               </div>

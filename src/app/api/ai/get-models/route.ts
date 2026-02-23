@@ -77,10 +77,7 @@ export async function GET(req: NextRequest) {
       pricing: model.pricing,
       top_provider: model.top_provider,
     }));
-
-    return NextResponse.json({
-      models: formattedModels,
-    });
+    return NextResponse.json(formattedModels);
   } catch (error: unknown) {
     return NextResponse.json(
       {
