@@ -13,6 +13,7 @@ function PasswordInput({
   return (
     <div className="relative flex ">
       <input
+        autoComplete="new-password"
         type={showPassword ? "text" : "password"}
         data-slot="input"
         className={cn(
