@@ -23,7 +23,7 @@ export default function ChatDeleteDialog({ chatId }: Props) {
   const currentChatId = useParams().id as string;
   const { mutateAsync: deleteChat } = useDeleteChat(chatId, currentChatId);
 
-  const handleDelete =  () => {
+  const handleDelete = () => {
     deleteChat();
   };
 

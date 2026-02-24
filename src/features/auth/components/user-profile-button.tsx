@@ -11,10 +11,11 @@ import {
 import { User } from "@/generated/prisma/client";
 import { LogIn, LogOut } from "lucide-react";
 import { authClient } from "../../../lib/auth-client";
-import { getCurrentUser } from "../actions/auth.action";
 
-export default async function UserButton() {
-  const user = await getCurrentUser();
+type Props = {
+  user: User;
+};
+export default async function UserButton({ user }: Props) {
   const getUserInitials = (name: User["name"], email: User["email"]) => {
     if (name) {
       return name
@@ -84,11 +85,7 @@ export default async function UserButton() {
             </p>
           </div>
         </DropdownMenuLabel>
-
         <DropdownMenuSeparator />
-
-        <DropdownMenuSeparator />
-
         <DropdownMenuItem asChild>
           <button
             className="w-full cursor-pointer text-destructive focus:text-destructive"

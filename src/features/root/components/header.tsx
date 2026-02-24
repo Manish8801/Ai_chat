@@ -10,12 +10,16 @@ import {
 } from "@/components/ui/sheet";
 import UserProfileButton from "@/features/auth/components/user-profile-button";
 import ChatList from "@/features/chat/components/chat-list";
+import { User } from "@/generated/prisma/client";
 import { cn } from "@/lib/utils";
 import { Menu, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { ModeToggle } from "./mode-toggle";
 
-export default function Header() {
+type Props = {
+  user: User;
+};
+export default function Header({ user }: Props) {
   return (
     <header className="flex w-full items-center justify-between border-b">
       <div className="md:hidden">
@@ -49,7 +53,7 @@ export default function Header() {
       </nav>
       <div className="flex gap-4 py-2 pr-4">
         <ModeToggle />
-        <UserProfileButton />
+        <UserProfileButton user={user} />
       </div>
     </header>
   );
