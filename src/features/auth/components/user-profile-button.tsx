@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +17,7 @@ import { authClient } from "../../../lib/auth-client";
 type Props = {
   user: User;
 };
-export default async function UserButton({ user }: Props) {
+export default function UserButton({ user }: Props) {
   const getUserInitials = (name: User["name"], email: User["email"]) => {
     if (name) {
       return name
