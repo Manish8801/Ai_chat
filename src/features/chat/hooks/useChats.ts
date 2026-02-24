@@ -6,6 +6,8 @@ export function useChats() {
   const { data: chats, isPending: fetchingChats } = useQuery<Chats>({
     queryKey: ["chats"],
     queryFn: () => getAllChats(),
+    refetchOnWindowFocus: false,
+    retry: 2,
   });
 
   return { chats, fetchingChats };

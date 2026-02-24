@@ -7,13 +7,17 @@ import { revalidatePath } from "next/cache";
 import { cache } from "react";
 
 export const getAllChats = cache(async () => {
-  const user = await requireCurrentUser();
-
-  return await prisma.chat.findMany({
-    where: { userId: user.id },
-    include: { messages: true },
-    orderBy: [{ createdAt: "desc" }],
-  });
+  try {
+    const user = await requireCurrentUser();
+    const chats = await prisma.chat.findMany({
+      where: { userId: user.id },
+      include: { messages: true },
+      orderBy: [{ createdAt: "desc" }],
+    });
+    return chats;
+  } catch (error) {
+    throw new Error("Failed to fetch chats from DB");
+  }
 });
 
 export async function deleteChat(chatId: Chat["id"]) {
