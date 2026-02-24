@@ -5,7 +5,7 @@ import { oneTap } from "better-auth/plugins";
 import { prisma } from "./prisma";
 
 export const auth = betterAuth({
-  appName: "Ai_chat",
+  appName: process.env.APP_NAME,
   baseURL: process.env.BETTER_AUTH_BASE_URL,
   advanced: {
     cookiePrefix: "ai_chat",

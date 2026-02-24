@@ -44,7 +44,7 @@ export default function Header() {
       </div>
       <nav className="hidden h-full w-64 md:flex border-r justify-center items-center">
         <Link href="/" className="font-extrabold font-lg">
-          <i>Ai_Chat</i>
+          <i>{process.env.APP_NAME}</i>
         </Link>
       </nav>
       <div className="flex gap-4 py-2 pr-4">
