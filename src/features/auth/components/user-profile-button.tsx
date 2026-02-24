@@ -1,7 +1,6 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,13 +10,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { User } from "@/generated/prisma/client";
-import { LogIn, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { authClient } from "../../../lib/auth-client";
 
 type Props = {
   user: User;
 };
 export default function UserButton({ user }: Props) {
+  const router = useRouter();
   const getUserInitials = (name: User["name"], email: User["email"]) => {
     if (name) {
       return name
@@ -38,14 +40,6 @@ export default function UserButton({ user }: Props) {
       year: "numeric",
     }).format(new Date(date));
   };
-  if (!user) {
-    return (
-      <Button variant={"ghost"} size={"icon"}>
-        <LogIn />
-      </Button>
-    );
-  }
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -93,6 +87,8 @@ export default function UserButton({ user }: Props) {
             className="w-full cursor-pointer text-destructive focus:text-destructive"
             onClick={async () => {
               await authClient.signOut();
+              toast.success("Logged out");
+              router.replace("/");
             }}
           >
             <LogOut className="mr-2 size-4" />

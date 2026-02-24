@@ -40,6 +40,7 @@ export default function LoginForm() {
           onSubmit={form.handleSubmit(handleSubmit)}
           className="flex flex-col gap-4"
         >
+          <input type="text" name="username" readOnly hidden />
           <FieldGroup className="flex flex-col gap-4">
             <Controller
               control={form.control}

@@ -45,6 +45,7 @@ export default function SignUpForm() {
           className="flex flex-col gap-4"
         >
           <FieldGroup className="flex flex-col gap-4">
+            <input type="text" name="username" readOnly hidden/>
             <Controller
               name="name"
               control={form.control}
