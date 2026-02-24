@@ -38,26 +38,69 @@ export default function SignUpForm() {
   };
 
   return (
-    <div className="flex-1">
-      <Card className="p-4">
-        <CardContent className="flex flex-col gap-4 p-0 ">
-          <SocialSignInButtons />
-          <Separator />
-          <form id="signup-form" onSubmit={form.handleSubmit(handleSubmit)}>
-            <FieldGroup className="flex flex-col gap-4">
+    <Card className="border-none">
+      <CardContent className="flex flex-col gap-4 p-0 ">
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="flex flex-col gap-4"
+        >
+          <FieldGroup className="flex flex-col gap-4">
+            <Controller
+              name="name"
+              control={form.control}
+              render={({ fieldState, field }) => (
+                <Field className="gap-2">
+                  <FieldLabel className="pl-2" htmlFor={field.name}>
+                    Full Name
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    name="name"
+                    id={field.name}
+                    placeholder="Full Name"
+                    autoComplete="name"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
+              name="email"
+              control={form.control}
+              render={({ fieldState, field }) => (
+                <Field className="gap-2">
+                  <FieldLabel className="pl-2" htmlFor={field.name}>
+                    Email
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    name="email"
+                    id={field.name}
+                    placeholder="Email Address"
+                    autoComplete="email"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <div className="relative flex gap-2">
               <Controller
-                name="name"
+                name="password"
                 control={form.control}
                 render={({ fieldState, field }) => (
                   <Field className="gap-2">
                     <FieldLabel className="pl-2" htmlFor={field.name}>
-                      Full Name
+                      Password
                     </FieldLabel>
-                    <Input
+                    <PasswordInput
                       {...field}
+                      name="password"
                       id={field.name}
-                      placeholder="John Doe"
-                      autoComplete="name"
+                      placeholder="Password"
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
@@ -66,18 +109,18 @@ export default function SignUpForm() {
                 )}
               />
               <Controller
-                name="email"
+                name="confirmPassword"
                 control={form.control}
                 render={({ fieldState, field }) => (
                   <Field className="gap-2">
                     <FieldLabel className="pl-2" htmlFor={field.name}>
-                      Email
+                      Confirm Password
                     </FieldLabel>
-                    <Input
+                    <PasswordInput
                       {...field}
+                      name="confirmPassword"
                       id={field.name}
-                      placeholder="johndoe@gmail.com"
-                      autoComplete="work email"
+                      placeholder="Confirm Password"
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
@@ -85,82 +128,44 @@ export default function SignUpForm() {
                   </Field>
                 )}
               />
-              <div className="relative flex gap-2">
-                <Controller
-                  name="password"
-                  control={form.control}
-                  render={({ fieldState, field }) => (
-                    <Field className="gap-2">
-                      <FieldLabel className="pl-2" htmlFor={field.name}>
-                        Password
-                      </FieldLabel>
-                      <PasswordInput
-                        {...field}
-                        id={field.name}
-                        placeholder={"********"}
-                      />
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  )}
-                />
-                <Controller
-                  name="confirmPassword"
-                  control={form.control}
-                  render={({ fieldState, field }) => (
-                    <Field className="gap-2">
-                      <FieldLabel className="pl-2" htmlFor={field.name}>
-                        Confirm Password
-                      </FieldLabel>
-                      <PasswordInput
-                        {...field}
-                        id={field.name}
-                        placeholder={"********"}
-                      />
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  )}
-                />
-              </div>
-              <Controller
-                name="rememberMe"
-                control={form.control}
-                render={({ field }) => (
-                  <Field orientation="horizontal">
-                    <Checkbox
-                      {...field}
-                      value="remember-me"
-                      id={field.name}
-                      name="remember-me"
-                      checked={!!field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                    <FieldLabel htmlFor={field.name}>Remember me</FieldLabel>
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-          </form>
-        </CardContent>
-        <CardFooter className="flex justify-end p-0 m-0">
+            </div>
+            <Controller
+              name="rememberMe"
+              control={form.control}
+              render={({ field }) => (
+                <Field orientation="horizontal">
+                  <Checkbox
+                    {...field}
+                    value="remember-me"
+                    id={field.name}
+                    name="remember-me"
+                    checked={!!field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                  <FieldLabel htmlFor={field.name}>Remember me</FieldLabel>
+                </Field>
+              )}
+            />
+          </FieldGroup>
           <Button
+            className="w-full cursor-pointer"
             disabled={form.formState.isSubmitting || !form.formState.isValid}
             type="submit"
-            form="signup-form"
           >
             {form.formState.isSubmitting ? "Signing you up..." : "Sign up"}
-          </Button>
-        </CardFooter>
-      </Card>
-      <p className="text-center text-sm mt-2">
-        Already have an account?{" "}
-        <Link className="underline underline-offset-2" href={"/log-in"}>
-          Log in
-        </Link>
-      </p>
-    </div>
+          </Button>{" "}
+        </form>
+        <Separator />
+        <SocialSignInButtons />
+      </CardContent>
+      <CardFooter className="">
+        <p className="mx-auto text-center text-sm">
+          Already have an account?{" "}
+          <Link className="underline underline-offset-2" href={"/log-in"}>
+            Log in
+          </Link>
+        </p>
+      </CardFooter>
+    </Card>
   );
 }

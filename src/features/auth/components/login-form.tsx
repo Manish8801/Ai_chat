@@ -32,54 +32,70 @@ export default function LoginForm() {
     await logInWithEmail(body);
   };
   return (
-    <div className="flex-1">
-      <Card className="p-4">
-        <CardContent className="flex flex-col gap-4 p-0 ">
-          <SocialSignInButtons />
-          <Separator />
-          <form id="login-form" onSubmit={form.handleSubmit(handleSubmit)}>
-            <FieldGroup>
-              <Controller
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <Field>
-                    <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                    <Input id={field.name} {...field} />
-                    <FieldError />
-                  </Field>
-                )}
-              />
-              <Controller
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <Field>
-                    <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                    <PasswordInput id={field.name} {...field} />
-                    <FieldError />
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-          </form>
-        </CardContent>
-        <CardFooter className="flex justify-end p-0 m-0">
+    <Card className="border-none">
+      <CardContent className="flex flex-col gap-4 p-0">
+        <SocialSignInButtons />
+        <Separator />
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="flex flex-col gap-4"
+        >
+          <FieldGroup className="flex flex-col gap-4">
+            <Controller
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <Field className="gap-2">
+                  <FieldLabel className="pl-2" htmlFor={field.name}>
+                    Email
+                  </FieldLabel>
+                  <Input
+                    id={field.name}
+                    {...field}
+                    name="email"
+                    autoComplete="email"
+                    placeholder="Email address"
+                  />
+                  <FieldError />
+                </Field>
+              )}
+            />
+            <Controller
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <Field className="gap-2">
+                  <FieldLabel className="pl-2" htmlFor={field.name}>
+                    Password
+                  </FieldLabel>
+                  <PasswordInput
+                    id={field.name}
+                    {...field}
+                    name="password"
+                    placeholder="Password"
+                  />
+                  <FieldError />
+                </Field>
+              )}
+            />
+          </FieldGroup>
           <Button
             disabled={form.formState.isSubmitting || !form.formState.isValid}
             type="submit"
-            form="login-form"
+            className="w-full cursor-pointer"
           >
             {form.formState.isSubmitting ? "Logging you in..." : "Log in"}
           </Button>
-        </CardFooter>
-      </Card>
-      <p className="text-center text-sm mt-2">
-        Don&apos;t have an account?{" "}
-        <Link className="underline underline-offset-2" href={"/sign-up"}>
-          Create one
-        </Link>
-      </p>
-    </div>
+        </form>
+      </CardContent>
+      <CardFooter className="">
+        <p className="text-center text-sm mx-auto">
+          Don&apos;t have an account?{" "}
+          <Link className="underline underline-offset-2" href={"/sign-up"}>
+            Create one
+          </Link>
+        </p>
+      </CardFooter>
+    </Card>
   );
 }
