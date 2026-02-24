@@ -6,8 +6,8 @@ export default async function HomePage() {
   const session = await getSession();
 
   return (
-    <div className="h-screen w-full flex flex-col items-center justify-center gap-10">
-      <h1 className=" ">Free AI Chatbot to chat with.</h1>
+    <div className="h-screen w-full flex flex-col items-center justify-center gap-10 p-4 sm:p-8">
+      <h1 className="text-center">Free AI Chatbot to chat with.</h1>
       <Button asChild>
         <Link href={session ? "/chats" : "/sign-up"}>Get Started</Link>
       </Button>
