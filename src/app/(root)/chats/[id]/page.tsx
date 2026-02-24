@@ -56,7 +56,8 @@ export default function ChatPage() {
       messages: initialMessages,
       transport: new DefaultChatTransport({ api: "/api/chat" }),
       onFinish: () => {
-        queryClient.invalidateQueries({ queryKey: ["chats", chatId] });
+        queryClient.invalidateQueries({ queryKey: ["chats"] });
+        queryClient.invalidateQueries({ queryKey: [chatId] });
       },
     });
 
