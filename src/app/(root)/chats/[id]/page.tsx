@@ -167,7 +167,6 @@ export default function ChatPage() {
           <PromptInput globalDrop multiple onSubmit={handleSubmit}>
             <PromptInputBody>
               <PromptInputTextarea
-                className="text-xl"
                 ref={textareaRef}
                 placeholder="Type your message..."
                 onKeyDown={handleKeyDown}
