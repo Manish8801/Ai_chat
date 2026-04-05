@@ -21,11 +21,9 @@ type Props = { chatId: Chat["id"] };
 export default function ChatDeleteDialog({ chatId }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const currentChatId = useParams().id as string;
-  const { mutateAsync: deleteChat } = useDeleteChat(chatId, currentChatId);
+  const { mutate: deleteChat } = useDeleteChat(chatId, currentChatId);
 
-  const handleDelete = () => {
-    deleteChat();
-  };
+  const handleDelete = () => deleteChat();
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>

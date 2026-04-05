@@ -83,7 +83,6 @@ export default function ChatList() {
                               <EllipsisVertical className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-
                           <DropdownMenuContent align="end" className="p-1">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuSeparator />
