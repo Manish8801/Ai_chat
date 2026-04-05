@@ -33,7 +33,7 @@ export default function LoginForm() {
   };
   return (
     <Card className="border-none">
-      <CardContent className="flex flex-col gap-4 p-0">
+      <CardContent className="flex flex-col gap-4 p-4">
         <SocialSignInButtons />
         <Separator />
         <form

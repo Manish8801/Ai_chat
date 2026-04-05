@@ -33,7 +33,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { DefaultChatTransport } from "ai";
 import { MessageSquare, RotateCcwIcon, SquareIcon } from "lucide-react";
 import { useParams } from "next/navigation";
-import { KeyboardEvent, useEffect, useMemo, useRef } from "react";
+import { KeyboardEvent, use, useEffect, useMemo, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -84,6 +84,10 @@ export default function ChatPage() {
     }
   };
 
+  useEffect(() => {
+    document.title = chat?.title ?? "Chat";
+  }, [chat]);
+  
   useEffect(() => {
     if (chat?.messages) {
       setMessages(initialMessages);

@@ -23,8 +23,9 @@ import {
   Sparkles,
 } from "lucide-react";
 import { nanoid } from "nanoid";
+import { Metadata } from "next";
 import { useRouter } from "next/navigation";
-import { KeyboardEvent, useRef } from "react";
+import { KeyboardEvent, useEffect, useRef } from "react";
 
 const CHAT_TAB_MESSAGE = [
   {
@@ -69,6 +70,10 @@ const CHAT_TAB_MESSAGE = [
   },
 ];
 
+
+export const metadata : Metadata = {
+  title: "New Chat"
+}
 export default function ChatsPage() {
   const router = useRouter();
   const textareaRef = useRef<HTMLTextAreaElement>(null);

@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: `%s | Store`,
+    template: `%s`,
     default: process.env.APP_NAME!,
   },
   description: "Talk to AI",
