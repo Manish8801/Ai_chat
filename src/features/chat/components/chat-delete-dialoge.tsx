@@ -14,7 +14,7 @@ import { Chat } from "@/generated/prisma/client";
 import { Button } from "@base-ui/react";
 import { Trash } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useOptimistic, useState } from "react";
 import { useDeleteChat } from "../hooks/useDeleteChat";
 
 type Props = { chatId: Chat["id"] };
@@ -23,7 +23,10 @@ export default function ChatDeleteDialog({ chatId }: Props) {
   const currentChatId = useParams().id as string;
   const { mutate: deleteChat } = useDeleteChat(chatId, currentChatId);
 
-  const handleDelete = () => deleteChat();
+  const handleDelete = () => {
+    deleteChat();
+
+  }
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>

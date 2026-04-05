@@ -12,13 +12,25 @@ export function useDeleteChat(
   const router = useRouter();
   return useMutation({
     mutationFn: () => deleteChat(chatId),
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ["chats"] });
+      const previousChats = queryClient.getQueryData(["chats"]);
+      queryClient.setQueryData(["chats"], (old: any) => {
+        return old?.filter((chat: Chat) => chat.id !== chatId);
+      });
+      return { previousChats };
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
+    },
     onSuccess: () => {
       toast.success("Chat deleted");
       queryClient.invalidateQueries({ queryKey: ["chats"] });
       if (currentChatId === chatId) router.push("/chats");
     },
-    onError: (err) => {
-      toast.error("Failed to create chat");
+    onError: (err, _, context) => {
+      queryClient.setQueryData(["chats"], context?.previousChats);
+      toast.error("Failed to delete chat");
     },
   });
 }

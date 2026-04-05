@@ -112,7 +112,7 @@ export default function NewChatInput() {
                 <TabsTrigger
                   key={tabName}
                   value={tabName}
-                  className="group p-0 "
+                  className="group p-0"
                 >
                   <div className="flex border border-accent-foreground items-center gap-2 px-2 py-1 rounded-md group-data-[state=active]:bg-primary group-data-[state=active]:text-primary-foreground transition-colors duration-100 ease-in">
                     {tabName}
