@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   },
   description: "Talk to AI",
   verification: {
-    google: "tP1XdzRCZWkgVi8bYcI_bfxr-U6xjBBPrZCOqjqav00",
+    google: process.env.GOOGLE_VERIFICATION!,
   },
 };
 
