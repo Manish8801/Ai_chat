@@ -21,6 +21,9 @@ export const metadata: Metadata = {
     default: process.env.APP_NAME!,
   },
   description: "Talk to AI",
+  verification: {
+    google: "tP1XdzRCZWkgVi8bYcI_bfxr-U6xjBBPrZCOqjqav00",
+  },
 };
 
 export default function RootLayout({
