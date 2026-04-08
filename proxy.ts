@@ -7,6 +7,12 @@ export async function proxy(request: NextRequest) {
     headers: await headers(),
   });
 
+if (
+  request.nextUrl.pathname === "/sitemap.xml" ||
+  request.nextUrl.pathname === "/robots.txt"
+) {
+  return;
+}
   if (!session) {
     return NextResponse.redirect(new URL("/log-in", request.url));
   }
