@@ -1,43 +1,60 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { PROVIDERS } from "@/features/auth/lib/types";
+import { PROVIDER } from "@/features/auth/lib/types";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import GithubOriginalIcon from "react-devicons/github/original";
 import GoogleOriginalIcon from "react-devicons/google/original";
 
-export default function SocialSignInButtons() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const signInWithSocials = (provider: PROVIDERS) => {
-    setIsLoading(true);
-    authClient.signIn.social({
-      provider,
-      callbackURL: "/chats",
-      disableRedirect: true,
-      errorCallbackURL: "/auth/sign-in",
-    });
+type Props = {
+  tabIndex? : number;
+}
+export default function SocialSignInButtons({tabIndex = 1} : Props) {
+  const [providerState, setProviderState] = useState<{
+    provider: PROVIDER | null;
+    isLoading: boolean;
+  }>({
+    provider: null,
+    isLoading: false,
+  });
+
+  const signInWithSocials = async (provider: PROVIDER) => {
+    setProviderState({ provider, isLoading: true });
+    try {
+      await authClient.signIn.social({
+        provider,
+        callbackURL: "/chats",
+        disableRedirect: true,
+        errorCallbackURL: "/auth/sign-in",
+      });
+    } catch (err) {
+      console.log("Error while signing in using social ");
+    } finally {
+      setProviderState({ provider: null, isLoading: false });
+    }
   };
 
   return (
     <div className="flex flex-col sm:flex-row justify-between items-between gap-4">
       <Button
-        disabled={isLoading}
-        className="cursor-pointer " 
-        onClick={() => signInWithSocials(PROVIDERS.GOOGLE)}
-      >
-        
-        Sign in with <GoogleOriginalIcon size={20} />
+        tabIndex={tabIndex + 1}
+        disabled={providerState.isLoading}
+        className="cursor-pointer flex-1 "
+        onClick={() => signInWithSocials(PROVIDER.GOOGLE)}
+        >
+        {providerState.provider === PROVIDER.GOOGLE ? "Signing in..." : "Google"}
+        <GoogleOriginalIcon size={20} />
       </Button>
       <span className="hidden sm:inline text-center">or</span>
       <Button
-        className="cursor-pointer"
-        disabled={isLoading}
+      tabIndex={tabIndex + 2}
+        className="cursor-pointer flex-1"
+        disabled={providerState.isLoading}
         type="button"
-        onClick={() => signInWithSocials(PROVIDERS.GITHUB)}
+        onClick={() => signInWithSocials(PROVIDER.GITHUB)}
       >
-        
-        Sign in with
+        {providerState.provider === PROVIDER.GITHUB ? "Signing in..." : "Github"}
         <GithubOriginalIcon size={20} color="#ffffff" />
       </Button>
     </div>

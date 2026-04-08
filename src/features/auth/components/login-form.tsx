@@ -34,13 +34,13 @@ export default function LoginForm() {
   return (
     <Card className="border-none">
       <CardContent className="flex flex-col gap-4 p-4">
-        <SocialSignInButtons />
+        <SocialSignInButtons tabIndex={0} />
         <Separator />
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
           className="flex flex-col gap-4"
         >
-          <input type="text" name="username" readOnly hidden />
+          <input tabIndex={1} type="text" name="username" readOnly hidden />
           <FieldGroup className="flex flex-col gap-4">
             <Controller
               control={form.control}
@@ -51,6 +51,7 @@ export default function LoginForm() {
                     Email
                   </FieldLabel>
                   <Input
+                    tabIndex={2}
                     id={field.name}
                     {...field}
                     name="email"
@@ -70,6 +71,7 @@ export default function LoginForm() {
                     Password
                   </FieldLabel>
                   <PasswordInput
+                    tabIndex={3}
                     id={field.name}
                     {...field}
                     name="password"
@@ -81,6 +83,7 @@ export default function LoginForm() {
             />
           </FieldGroup>
           <Button
+            tabIndex={4}
             disabled={form.formState.isSubmitting || !form.formState.isValid}
             type="submit"
             className="w-full cursor-pointer"
@@ -92,7 +95,7 @@ export default function LoginForm() {
       <CardFooter className="">
         <p className="text-center text-sm mx-auto">
           Don&apos;t have an account?{" "}
-          <Link className="underline underline-offset-2" href={"/sign-up"}>
+          <Link tabIndex={5} className="underline underline-offset-2" href={"/sign-up"}>
             Create one
           </Link>
         </p>

@@ -26,6 +26,7 @@ const DEFAULT_VALUES = {
   confirmPassword: "",
   rememberMe: false,
 };
+
 export default function SignUpForm() {
   const form = useForm({
     resolver: zodResolver(signUpFormSchema),
@@ -45,7 +46,7 @@ export default function SignUpForm() {
           className="flex flex-col gap-4"
         >
           <FieldGroup className="flex flex-col gap-4">
-            <input type="text" name="username" readOnly hidden/>
+            <input type="text" name="username" tabIndex={1} readOnly hidden/>
             <Controller
               name="name"
               control={form.control}
@@ -55,6 +56,7 @@ export default function SignUpForm() {
                     Full Name
                   </FieldLabel>
                   <Input
+                  tabIndex={2}
                     {...field}
                     name="name"
                     id={field.name}
@@ -76,6 +78,7 @@ export default function SignUpForm() {
                     Email
                   </FieldLabel>
                   <Input
+                  tabIndex={3}
                     {...field}
                     name="email"
                     id={field.name}
@@ -98,6 +101,7 @@ export default function SignUpForm() {
                       Password
                     </FieldLabel>
                     <PasswordInput
+                    tabIndex={4}
                       {...field}
                       name="password"
                       id={field.name}
@@ -118,6 +122,7 @@ export default function SignUpForm() {
                       Confirm Password
                     </FieldLabel>
                     <PasswordInput
+                    tabIndex={5}
                       {...field}
                       name="confirmPassword"
                       id={field.name}
@@ -137,6 +142,7 @@ export default function SignUpForm() {
                 <Field orientation="horizontal">
                   <Checkbox
                     {...field}
+                    tabIndex={6}
                     value="remember-me"
                     id={field.name}
                     name="remember-me"
@@ -149,6 +155,7 @@ export default function SignUpForm() {
             />
           </FieldGroup>
           <Button
+          tabIndex={7}
             className="w-full cursor-pointer"
             disabled={form.formState.isSubmitting || !form.formState.isValid}
             type="submit"
@@ -157,12 +164,12 @@ export default function SignUpForm() {
           </Button>{" "}
         </form>
         <Separator />
-        <SocialSignInButtons />
+        <SocialSignInButtons tabIndex={8}/>
       </CardContent>
       <CardFooter className="">
         <p className="mx-auto text-center text-sm">
           Already have an account?{" "}
-          <Link className="underline underline-offset-2" href={"/log-in"}>
+          <Link tabIndex={9} className="underline underline-offset-2" href={"/log-in"}>
             Log in
           </Link>
         </p>

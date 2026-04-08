@@ -1,9 +1,9 @@
 import z from "zod";
 import { logInFormSchema, signUpFormSchema } from "./validator";
 
-export enum PROVIDERS {
+export enum PROVIDER {
   GOOGLE = "google",
-  GITHUB = "githun",
+  GITHUB = "github",
 }
 
 export type SignUpFormInput = z.infer<typeof signUpFormSchema>;

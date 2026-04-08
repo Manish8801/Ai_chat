@@ -30,9 +30,10 @@ function PasswordInput({ className, ...props }: React.ComponentProps<"input">) {
         {...props}
       />
       <button
+      tabIndex={props.tabIndex ? props.tabIndex + 1 : 1}
         type="button" // Important: prevents form submission on click
         onClick={() => setShowPassword((prev) => !prev)}
-        className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-muted-foreground hover:text-foreground focus:outline-none"
+        className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-muted-foreground hover:text-foreground focus:outline-none focus:ring-1 ring-primary"
         aria-label={showPassword ? "Hide password" : "Show password"}
       >
         {showPassword ? (
